@@ -1,0 +1,89 @@
+import requests
+import matplotlib.pyplot as plt
+from datetime import datetime
+import pandas as pd
+import matplotlib.dates as mdates
+
+# Surf spot names and their corresponding Surfline Spot IDs
+spots = {
+    "Sandy Beach": "5842041f4e65fad6a7708df6",
+    "Waimea Bay": "5842041f4e65fad6a7708895",
+    "Ehukai": "653b83b84f42f85b45263e14",
+    "Ala Moana Bowls": "5842041f4e65fad6a7708b42",
+    "Makaha": "5842041f4e65fad6a7708dfd",
+    "Log Cabins": "5842041f4e65fad6a7708893",
+    "Yokohama": "5842041f4e65fad6a7708dfc"
+}
+
+# Base Surfline API endpoint for wave forecast
+BASE_URL = "https://services.surfline.com/kbyg/spots/forecasts/wave"
+
+# Function to fetch wave forecast data for a given surf spot ID
+def fetch_avg_per_day(spot_id):
+    url = f"{BASE_URL}?spotId={spot_id}&days=6"
+    response = requests.get(url)
+    data = response.json()
+
+    records = []
+    for point in data.get("data", {}).get("wave", []):
+        timestamp = point.get("timestamp")
+        height = point.get("surf", {}).get("max")
+        if isinstance(height, (int, float)):
+            day = datetime.fromtimestamp(timestamp).strftime("%m/%d")
+            records.append((day, height))
+
+    df = pd.DataFrame(records, columns=["day", "height"])
+    daily_avg = df.groupby("day").mean().reset_index()
+    return daily_avg
+
+# Function to plot wave height forecasts for each surf spot
+#def plot_wave_heights():
+    #plt.figure(figsize=(12, 6))  # Set the size of the graph
+
+   # for name, spot_id in spots.items():
+      #  wave_data = fetch_wave_forecast(spot_id)
+
+        # Extract time (timestamp) and max wave height from each forecast point
+       # times = [datetime.fromtimestamp(point['timestamp']) for point in wave_data]
+       # heights = [point['surf']['max'] for point in wave_data]
+
+       # plt.plot(times, heights, label=name)
+
+    # Customize the plot
+  #  plt.title("Wave Height Forecast (Next 6 Days)")
+  #  plt.xlabel("Date and Time")
+  #  plt.ylabel("Wave Height (ft)")
+   # plt.legend()  # Add a legend for surf spot names
+    #plt.grid(True)
+   # plt.gca().xaxis.set_major_formatter(mdates.DateFormatter('%m/%d\n%H:%M'))  # Format time labels
+   # plt.tight_layout()
+   # plt.show()
+
+# Run the function to generate the plot
+#plot_wave_heights()
+
+def plot_histogram_style_bars():
+    num_spots = len(spots)
+    cols = 3
+    rows = (num_spots + cols - 1) // cols
+
+    fig, axes = plt.subplots(rows, cols, figsize=(16, 10))
+    axes = axes.flatten()
+
+    for i, (name, spot_id) in enumerate(spots.items()):
+        daily_avg = fetch_avg_per_day(spot_id)
+
+        axes[i].bar(daily_avg["day"], daily_avg["height"], color='skyblue', edgecolor='black')
+        axes[i].set_title(name)
+        axes[i].set_xlabel("Day")
+        axes[i].set_ylabel("Avg Wave Height (ft)")
+
+    # Hide any unused subplots
+    for j in range(i + 1, len(axes)):
+        axes[j].axis("off")
+
+    plt.tight_layout()
+    plt.suptitle("Wave Height Histograms (Next 6 Days)", fontsize=16, y=1.02)
+    plt.show()
+
+plot_histogram_style_bars()
