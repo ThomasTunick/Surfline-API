@@ -7,4 +7,5 @@ Parsed the JSON repsonse into a Pandas Dataframe
 Cleaned the data set and analyzed patterns in wave height overtime
 # Problem
 Data was originally a dot/line plot which didn't make toom uch sense and didn't lok visually appealing so converted it into a Histogram
+Surfline also only allows you pull 5 days of data which is waht led me into doing the NOAA project to get me more accurate forecasting
 # Plot 
