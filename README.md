@@ -9,4 +9,4 @@ Cleaned the data set and analyzed patterns in wave height overtime
 Data was originally a dot/line plot which didn't make too much sense and didn't look visually appealing so converted it into a Histogram
 Surfline also only allows you pull 5 days of data which is what led me into doing the NOAA project to get me more accurate forecasting
 # Plot 
-![Wave Height Histogram](Screenshot%202025-08-25%20173934.png)
+![Wave Height Histogram](Screenshot 2025-08-25 173934.png)
